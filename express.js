@@ -30,7 +30,7 @@ app.use((req,res,next) => {
 
 app.post('/home', (req,res) => {
     if(!req.statusCode.goit){
-        return res.status(400).json({status:'goit parameter is required'})
+        return res.status(400).json({status:'Goit parameter is required'})
     }
     res.json({javascript: 'object', body:req.body});
 });
