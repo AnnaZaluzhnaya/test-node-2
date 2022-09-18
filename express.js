@@ -2,6 +2,8 @@
 const { request, response } = require('express');
 const express = require('express');
 const app = express();
+const got = require('got');
+const {router} = require('./booksRouter');
 
 const morgan = require('morgan');
 
@@ -11,29 +13,38 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));//парсит стандартные данные с форм
 app.use(morgan('tini')); //публичній мидеолвер
 
-app.use(express.static('public')); //делает директорию на сервере публичной 
-
+app.use('/api',router);
 // app.get('/home', (request,response) => {
 //     response.sendStatus(200);
 // });
 
 //middlewere который передает дальше действия--------------
-app.use((req,res,next) => {
-    console.log(`${req.method} ${req.originalUrl} ${new Date().toISOString()}`)
-    next();
-});
+// app.use((req,res,next) => {
+//     console.log(`${req.method} ${req.originalUrl} ${new Date().toISOString()}`)
+//     next();
+// });
 
 // app.post('/home', (req,res) => {
 //     console.log(req.body);
 //     res.json({javascript: 'object', body:req.body});
 // });
-
-app.post('/home', (req,res) => {
-    if(!req.statusCode.goit){
-        return res.status(400).json({status:'lkjhgfdsdfghjkGGoit parameter is required'})
+const baseURL = 'http://api.weatherbit.io/v2.0/current';
+app.get('/api/weather', async (req,res) => {
+    try {
+        const response = await got(baseURL,{
+            searchParams:{
+                Key: '891c55a49e2140818b4de17839ea9347',
+                lat: '50.520295',
+                lon: '30.625399'
+            },
+            responseType: 'json',
+        });
+        res.json({response: response.body});
+    } catch (error) {
+        res.status(500).json({message: error.message})
     }
-    res.json({javascript: 'object', body:req.body});
 });
+
 
 
 // app.get('/home', (request,response) => {
